@@ -14,7 +14,7 @@ export const signUp = async (req, res, next) => {
     email === "" ||
     username === ""
   ) {
-    next(errorHandler(400, "All fields are required."));
+    return next(errorHandler(400, "All fields are required."));
   } else {
     const hashedPassword = bcryptjs.hashSync(password, 10);
 
@@ -28,7 +28,7 @@ export const signUp = async (req, res, next) => {
       await user.save();
       res.json("created successfully.");
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 };
@@ -36,12 +36,12 @@ export const signUp = async (req, res, next) => {
 export const signIn = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(errorHandler(400, "All fields are required."));
+    return next(errorHandler(400, "All fields are required."));
   } else {
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        next(errorHandler(400, "Invalid Credentials."));
+        return next(errorHandler(400, "Invalid Credentials."));
       } else {
         const { password: pass, ...userDetails } = user._doc;
         const isMatch = bcryptjs.compareSync(password, pass);
@@ -52,7 +52,7 @@ export const signIn = async (req, res, next) => {
             .cookie("access_token", token, { httpOnly: true })
             .json(userDetails);
         } else {
-          next(errorHandler(400, "Invalid Credentials."));
+          return next(errorHandler(400, "Invalid Credentials."));
         }
       }
     } catch (error) {
