@@ -2,23 +2,28 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  signInSuccess,
+  signInFailure,
+  signInStart,
+} from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return setErrorMessage("Fill all the fields.");
+      return dispatch(signInFailure("Fill all the fields."));
     }
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -26,15 +31,16 @@ export default function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        setErrorMessage(data.message);
+        dispatch(signInFailure(data.message));
       }
-      setLoading(false);
+      else {
+      dispatch(signInSuccess(data));
       if (res.ok) {
         navigate("/");
       }
+    }
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
   return (
@@ -49,14 +55,13 @@ export default function SignIn() {
             Blog
           </Link>
           <p className="text-sm mt-5">
-            This is a demo Project.User can sign in with his email and
-            password or with Google.
+            This is a demo Project.User can sign in with his email and password
+            or with Google.
           </p>
         </div>
         {/* right side */}
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            
             <div className="">
               <Label value="Your Email" />
               <TextInput
@@ -103,6 +108,6 @@ export default function SignIn() {
           )}
         </div>
       </div>
-    </div> 
+    </div>
   );
 }
