@@ -12,7 +12,7 @@ export default function FooterComponent() {
               className="self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white"
             >
               <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl">
-                Kannan's
+                My
               </span>
               Blog
             </Link>
@@ -29,7 +29,7 @@ export default function FooterComponent() {
                   Google
                 </Footer.Link>
                 <Footer.Link href="/about" rel="noopener noreferrer">
-                  Kannan's Blog
+                  My Blog
                 </Footer.Link>
               </Footer.LinkGroup>
             </div>
@@ -58,7 +58,7 @@ export default function FooterComponent() {
         <div className="w-full sm:flex sm:items-center sm:justify-between">
           <Footer.Copyright
             href="#"
-            by="Kannan's blog"
+            by="My blog"
             year={new Date().getFullYear()}
           />
 
